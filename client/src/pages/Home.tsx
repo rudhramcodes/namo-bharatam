@@ -13,9 +13,9 @@ import {
 } from "lucide-react";
 
 const imagePaths = {
-  moon: "/manus-storage/chandrayaan_6d2c22ec.jpg",
-  upi: "/manus-storage/upi_00888a81.jpg",
-  rail: "/manus-storage/namo-rail_b0ab88be.png",
+  moon: "/images/chandrayaan.jpg",
+  upi: "/images/upi.jpg",
+  rail: "/images/namo-rail.png",
 };
 
 type Domain = "all" | "digital" | "infrastructure" | "space" | "people" | "climate" | "world";
