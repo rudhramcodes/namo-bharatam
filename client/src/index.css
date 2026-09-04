@@ -105,7 +105,6 @@ a { color: inherit; text-decoration: none; }
 .section-ink { position: relative; background: #32130f; color: #f4eadb; }
 .section-saffron { position: relative; background: #d95b31; color: #fff3e2; }
 .section-label { display: flex; align-items: center; gap: 16px; font: 10px/1 'DM Mono', monospace; letter-spacing: .13em; color: #b65c43; }
-.section-label::before { content: ''; width: 30px; height: 1px; background: currentColor; }
 .section-label span { opacity: .7; }
 .section-label.light { color: #f39c74; }
 
@@ -186,12 +185,20 @@ a { color: inherit; text-decoration: none; }
 .film-card { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr .9fr; min-height: 550px; background: #491b13; }
 .film-poster { position: relative; display: flex; align-items: center; justify-content: center; min-height: 500px; background-size: cover; background-position: center; overflow: hidden; }
 .film-poster::after { content: ''; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(48,12,9,.7), rgba(48,12,9,.1) 60%, rgba(48,12,9,.6)); }
+.film-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.72) sepia(.2) contrast(1.04); }
 .film-tint { position: absolute; inset: 0; background: #dd6c3c; mix-blend-mode: color; opacity: .32; }
 .film-label, .film-caption { position: absolute; z-index: 2; left: 24px; right: 24px; font: 10px/1 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: #fff4e1; }
 .film-label { top: 22px; }
 .film-caption { bottom: 21px; }
-.film-play { position: relative; z-index: 3; display: grid; place-items: center; width: 90px; height: 90px; border: 1px solid rgba(255, 246, 227, .7); border-radius: 50%; color: #fff6e7; transition: scale .25s ease, background .25s ease; }
-.film-poster:hover .film-play { scale: 1.08; background: rgba(255,246,227,.16); }
+.film-play { position: relative; z-index: 3; display: grid; place-items: center; width: 90px; height: 90px; border: 1px solid rgba(255, 246, 227, .7); border-radius: 50%; color: #fff6e7; cursor: pointer; transition: scale .25s ease, background .25s ease, opacity .25s ease; }
+.film-poster:not(.controls-visible) .film-play { opacity: .82; }
+.film-poster:hover .film-play, .film-poster.controls-visible .film-play { scale: 1.08; background: rgba(255,246,227,.16); }
+.film-controls { position: absolute; z-index: 4; left: 18px; right: 18px; bottom: 47px; display: flex; align-items: center; gap: 11px; padding: 9px 11px; border: 1px solid rgba(255,255,255,.22); border-radius: 14px; background: rgba(28, 13, 11, .56); backdrop-filter: blur(16px); opacity: 0; transform: translateY(8px); transition: opacity .22s ease, transform .22s ease; }
+.film-poster:hover .film-controls, .film-poster.controls-visible .film-controls { opacity: 1; transform: translateY(0); }
+.film-controls button { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; color: #fff4e1; cursor: pointer; }
+.film-controls button:hover { background: rgba(255,255,255,.16); }
+.film-controls input { min-width: 0; flex: 1; accent-color: #ee8d62; cursor: pointer; }
+.film-live { font: 8px/1 'DM Mono', monospace; letter-spacing: .08em; color: rgba(255,240,221,.65); white-space: nowrap; }
 .film-copy { display: flex; flex-direction: column; justify-content: center; padding: 70px 58px; }
 .film-copy .display-kicker { color: #f19b72; }
 .film-copy h2 { margin: 31px 0 30px; font-size: clamp(46px, 5.2vw, 77px); }

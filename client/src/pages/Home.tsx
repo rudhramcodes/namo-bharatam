@@ -1,17 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowUpRight,
   BookOpen,
   ChevronRight,
-  CirclePlay,
   ExternalLink,
   Instagram,
   Linkedin,
   Menu,
-  MoveDown,
+  Pause,
+  Play,
   Quote,
-  Sparkles,
+  Volume2,
+  VolumeX,
   X,
 } from "lucide-react";
 
@@ -94,6 +95,12 @@ export default function Home() {
   const [activeDomain, setActiveDomain] = useState<Domain>("all");
   const [activeYear, setActiveYear] = useState("2014");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [filmUiVisible, setFilmUiVisible] = useState(false);
+  const [filmPlaying, setFilmPlaying] = useState(true);
+  const [filmMuted, setFilmMuted] = useState(true);
+  const [filmProgress, setFilmProgress] = useState(0);
+  const [filmDuration, setFilmDuration] = useState(0);
+  const filmRef = useRef<HTMLVideoElement>(null);
 
   const filteredTimeline = useMemo(
     () => activeDomain === "all" ? timeline : timeline.filter((item) => item.domain === activeDomain),
@@ -137,6 +144,38 @@ export default function Home() {
       window.removeEventListener("scroll", onScroll);
     };
   }, []);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      document.querySelectorAll<HTMLElement>(".timeline-item[data-reveal]").forEach((item) => item.classList.add("is-visible"));
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeDomain]);
+
+  const toggleFilmPlay = () => {
+    if (!filmRef.current) return;
+    if (filmRef.current.paused) {
+      void filmRef.current.play();
+      setFilmPlaying(true);
+    } else {
+      filmRef.current.pause();
+      setFilmPlaying(false);
+    }
+    setFilmUiVisible(true);
+  };
+
+  const toggleFilmMute = () => {
+    if (!filmRef.current) return;
+    filmRef.current.muted = !filmRef.current.muted;
+    setFilmMuted(filmRef.current.muted);
+    setFilmUiVisible(true);
+  };
+
+  const seekFilm = (value: number) => {
+    if (!filmRef.current || !filmDuration) return;
+    filmRef.current.currentTime = value * filmDuration;
+    setFilmProgress(value);
+  };
 
   const scrollTo = (id: string) => {
     const target = id.startsWith("year-")
@@ -197,7 +236,7 @@ export default function Home() {
           <p className="manifesto-copy" data-reveal>One governing decade, seen as a set of connected moves: access before aspiration, rails before speed, public digital infrastructure before scale.</p>
           <div className="manifesto-rule" data-reveal><span>THE QUESTION</span><span>What does progress feel like when it moves at the speed of a billion lives?</span></div>
         </div>
-        <div className="paper-scribble" aria-hidden="true">भारत<br /><span>India</span></div>
+        <div className="paper-scribble" aria-hidden="true" style={{fontWeight: '700'}}>भारत<br style={{fontWeight: '700'}} /><span style={{fontWeight: '700'}}>India</span></div>
       </section>
 
       <section id="impact" className="impact-section section-ink">
@@ -240,7 +279,7 @@ export default function Home() {
           <p>Not an exhaustive audit. A deliberately edited sequence of public milestones, with every date linked to the institution that records it.</p>
         </div>
         <div className="domain-filter" role="tablist" aria-label="Filter the archive">
-          {domains.map((domain) => <button key={domain.id} className={activeDomain === domain.id ? "active" : ""} onClick={() => setActiveDomain(domain.id)}>{domain.label}</button>)}
+          {domains.map((domain) => <button type="button" role="tab" aria-selected={activeDomain === domain.id} key={domain.id} className={activeDomain === domain.id ? "active" : ""} onClick={() => setActiveDomain(domain.id)}>{domain.label}</button>)}
         </div>
         <div className="timeline-list">
           {filteredTimeline.map((item, index) => (
@@ -264,8 +303,19 @@ export default function Home() {
 
       <section className="film-section section-ink">
         <div className="film-card" data-reveal>
-          <div className="film-poster" style={{ backgroundImage: `url(${imagePaths.moon})` }}><div className="film-tint" /><span className="film-label">FIELD NOTE / 23.08.23</span><div className="film-play"><CirclePlay size={48} strokeWidth={1.2} /></div><span className="film-caption">Chandrayaan-3 · the landing that changed the map</span></div>
-          <div className="film-copy"><p className="display-kicker">The moving image</p><h2>Watch a<br /><i>nation look up.</i></h2><p>Space is a useful metaphor only when it stays specific: a mission, a date, a signal, a team. Visit the official ISRO channel for the films behind the milestones.</p><a className="button-outline" href="https://www.youtube.com/@isroofficial5866/search?query=Chandrayaan%203" target="_blank" rel="noreferrer">Open ISRO films <ArrowUpRight size={15} /></a></div>
+          <div className={`film-poster ${filmUiVisible ? "controls-visible" : ""}`} style={{ backgroundImage: `url(${imagePaths.moon})` }} onMouseEnter={() => setFilmUiVisible(true)} onMouseLeave={() => setFilmUiVisible(false)} onClick={() => setFilmUiVisible(true)}>
+            <video ref={filmRef} className="film-video" autoPlay loop muted playsInline poster={imagePaths.moon} onLoadedMetadata={(event) => setFilmDuration(event.currentTarget.duration)} onTimeUpdate={(event) => { const video = event.currentTarget; setFilmProgress(video.duration ? video.currentTime / video.duration : 0); }} onPlay={() => setFilmPlaying(true)} onPause={() => setFilmPlaying(false)} src="https://assets.mixkit.co/videos/preview/mixkit-earth-rotating-in-space-16187-large.mp4" />
+            <div className="film-tint" /><span className="film-label">FIELD NOTE / 23.08.23</span>
+            <button type="button" className="film-play" aria-label={filmPlaying ? "Pause film" : "Play film"} onClick={(event) => { event.stopPropagation(); toggleFilmPlay(); }}>{filmPlaying ? <Pause size={34} strokeWidth={1.4} /> : <Play size={34} strokeWidth={1.4} />}</button>
+            <div className="film-controls" onClick={(event) => event.stopPropagation()}>
+              <button type="button" aria-label={filmPlaying ? "Pause" : "Play"} onClick={toggleFilmPlay}>{filmPlaying ? <Pause size={15} /> : <Play size={15} />}</button>
+              <input aria-label="Film progress" type="range" min="0" max="1" step="0.001" value={filmProgress} onChange={(event) => seekFilm(Number(event.target.value))} />
+              <button type="button" aria-label={filmMuted ? "Unmute" : "Mute"} onClick={toggleFilmMute}>{filmMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}</button>
+              <span className="film-live">LIVE / LOOP</span>
+            </div>
+            <span className="film-caption">Chandrayaan-3 · an ambient orbital study</span>
+          </div>
+          <div className="film-copy"><p className="display-kicker">The moving image</p><h2>Watch a<br /><i>nation look up.</i></h2><p>Ambient orbital footage plays inline, muted by default. Hover or tap the frame to reveal Pixel-style play, mute and scrub controls.</p><a className="button-outline" href="https://www.youtube.com/@isroofficial5866/search?query=Chandrayaan%203" target="_blank" rel="noreferrer">Open ISRO films <ArrowUpRight size={15} /></a></div>
         </div>
       </section>
 
