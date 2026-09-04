@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -8,11 +8,7 @@ import {
   Instagram,
   Linkedin,
   Menu,
-  Pause,
-  Play,
   Quote,
-  Volume2,
-  VolumeX,
   X,
 } from "lucide-react";
 
@@ -95,12 +91,6 @@ export default function Home() {
   const [activeDomain, setActiveDomain] = useState<Domain>("all");
   const [activeYear, setActiveYear] = useState("2014");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [filmUiVisible, setFilmUiVisible] = useState(false);
-  const [filmPlaying, setFilmPlaying] = useState(true);
-  const [filmMuted, setFilmMuted] = useState(true);
-  const [filmProgress, setFilmProgress] = useState(0);
-  const [filmDuration, setFilmDuration] = useState(0);
-  const filmRef = useRef<HTMLVideoElement>(null);
 
   const filteredTimeline = useMemo(
     () => activeDomain === "all" ? timeline : timeline.filter((item) => item.domain === activeDomain),
@@ -151,31 +141,6 @@ export default function Home() {
     });
     return () => window.cancelAnimationFrame(frame);
   }, [activeDomain]);
-
-  const toggleFilmPlay = () => {
-    if (!filmRef.current) return;
-    if (filmRef.current.paused) {
-      void filmRef.current.play();
-      setFilmPlaying(true);
-    } else {
-      filmRef.current.pause();
-      setFilmPlaying(false);
-    }
-    setFilmUiVisible(true);
-  };
-
-  const toggleFilmMute = () => {
-    if (!filmRef.current) return;
-    filmRef.current.muted = !filmRef.current.muted;
-    setFilmMuted(filmRef.current.muted);
-    setFilmUiVisible(true);
-  };
-
-  const seekFilm = (value: number) => {
-    if (!filmRef.current || !filmDuration) return;
-    filmRef.current.currentTime = value * filmDuration;
-    setFilmProgress(value);
-  };
 
   const scrollTo = (id: string) => {
     const target = id.startsWith("year-")
@@ -303,19 +268,12 @@ export default function Home() {
 
       <section className="film-section section-ink">
         <div className="film-card" data-reveal>
-          <div className={`film-poster ${filmUiVisible ? "controls-visible" : ""}`} style={{ backgroundImage: `url(${imagePaths.moon})` }} onMouseEnter={() => setFilmUiVisible(true)} onMouseLeave={() => setFilmUiVisible(false)} onClick={() => setFilmUiVisible(true)}>
-            <video ref={filmRef} className="film-video" autoPlay loop muted playsInline poster={imagePaths.moon} onLoadedMetadata={(event) => setFilmDuration(event.currentTarget.duration)} onTimeUpdate={(event) => { const video = event.currentTarget; setFilmProgress(video.duration ? video.currentTime / video.duration : 0); }} onPlay={() => setFilmPlaying(true)} onPause={() => setFilmPlaying(false)} src="https://assets.mixkit.co/videos/preview/mixkit-earth-rotating-in-space-16187-large.mp4" />
+          <div className="film-poster" style={{ backgroundImage: `url(${imagePaths.moon})` }}>
+            <iframe className="film-video" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLPPKwCCueQ_CGgXjbfUoegMewEz4J2R9H&autoplay=1&mute=1&loop=1&controls=1&rel=0" title="Chandrayaan-3 landing video archive" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
             <div className="film-tint" /><span className="film-label">FIELD NOTE / 23.08.23</span>
-            <button type="button" className="film-play" aria-label={filmPlaying ? "Pause film" : "Play film"} onClick={(event) => { event.stopPropagation(); toggleFilmPlay(); }}>{filmPlaying ? <Pause size={34} strokeWidth={1.4} /> : <Play size={34} strokeWidth={1.4} />}</button>
-            <div className="film-controls" onClick={(event) => event.stopPropagation()}>
-              <button type="button" aria-label={filmPlaying ? "Pause" : "Play"} onClick={toggleFilmPlay}>{filmPlaying ? <Pause size={15} /> : <Play size={15} />}</button>
-              <input aria-label="Film progress" type="range" min="0" max="1" step="0.001" value={filmProgress} onChange={(event) => seekFilm(Number(event.target.value))} />
-              <button type="button" aria-label={filmMuted ? "Unmute" : "Mute"} onClick={toggleFilmMute}>{filmMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}</button>
-              <span className="film-live">LIVE / LOOP</span>
-            </div>
-            <span className="film-caption">Chandrayaan-3 · an ambient orbital study</span>
+            <span className="film-caption">Chandrayaan-3 · landing telecast archive · YouTube controls enabled</span>
           </div>
-          <div className="film-copy"><p className="display-kicker">The moving image</p><h2>Watch a<br /><i>nation look up.</i></h2><p>Ambient orbital footage plays inline, muted by default. Hover or tap the frame to reveal Pixel-style play, mute and scrub controls.</p><a className="button-outline" href="https://www.youtube.com/@isroofficial5866/search?query=Chandrayaan%203" target="_blank" rel="noreferrer">Open ISRO films <ArrowUpRight size={15} /></a></div>
+          <div className="film-copy"><p className="display-kicker">The moving image</p><h2>Watch a<br /><i>nation look up.</i></h2><p>The Chandrayaan-3 landing telecast is embedded inline. Hover or tap the frame to reveal YouTube’s native play, pause, volume and scrub controls.</p><a className="button-outline" href="https://www.youtube.com/@isroofficial5866/search?query=Chandrayaan%203" target="_blank" rel="noreferrer">Open ISRO films <ArrowUpRight size={15} /></a></div>
         </div>
       </section>
 
