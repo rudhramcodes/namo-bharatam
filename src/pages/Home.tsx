@@ -155,9 +155,8 @@ export default function Home() {
       <div className="grain" aria-hidden="true" />
       <div className="progress-track" aria-hidden="true"><span /></div>
       <header className="site-nav">
-        <button className="brand-lockup" onClick={() => scrollTo("top")} aria-label="Back to top">
-          <span className="brand-mark">न</span>
-          <span><strong>NAMO</strong><em>BHARATAM</em></span>
+        <button className="brand-lockup flex items-center gap-2 hover:opacity-80 transition-opacity" onClick={() => scrollTo("top")} aria-label="Back to top">
+          <img src="/images/namo-bharatam-logo.png" alt="Namo Bharatam" className="h-16 md:h-20 w-auto object-contain drop-shadow-lg" />
         </button>
         <nav className={menuOpen ? "nav-links is-open" : "nav-links"}>
           <button onClick={() => scrollTo("archive")}>The archive</button>
@@ -184,7 +183,7 @@ export default function Home() {
         <div className="hero-copy">
           <p className="eyebrow">A visual archive <span>•</span> 2014—2026</p>
           <p className="hero-kicker">नमो भारतम् <span>/</span> a decade in motion</p>
-          <h1 className="hero-title"><span className="line">A decade</span><span className="line italic">of motion.</span></h1>
+          <h1 className="hero-title"><span className="line bg-gradient-to-r from-orange-400 via-yellow-200 to-green-400 bg-clip-text text-transparent drop-shadow-md">A decade</span><span className="line italic text-white/95 font-light">of motion.</span></h1>
           <p className="hero-note">A curated, source-linked record of the systems, missions and everyday shifts that shaped India’s public story under Narendra Modi.</p>
         </div>
         <button className="hero-scroll" onClick={() => scrollTo("manifesto")}><span>Scroll to enter the record</span><ArrowDown size={17} /></button>
@@ -284,7 +283,7 @@ export default function Home() {
           <div><p className="source-index">B / CONTEXT</p><a href="https://www.niti.gov.in/" target="_blank" rel="noreferrer">NITI Aayog <ArrowUpRight size={15} /></a><a href="https://www.g20.org/en/" target="_blank" rel="noreferrer">G20 India <ArrowUpRight size={15} /></a><a href="https://unfccc.int/" target="_blank" rel="noreferrer">UNFCCC <ArrowUpRight size={15} /></a><a href="https://www.mohfw.gov.in/" target="_blank" rel="noreferrer">Ministry of Health <ArrowUpRight size={15} /></a></div>
           <div><p className="source-index">C / THE NOTE</p><p className="method-note">Dates are written in the format used by the originating institution where available. Metrics are intentionally restrained; where the public record is ongoing, the copy says so. Built as a living exhibit for Namo Bharatam.</p></div>
         </div>
-        <div className="footer-lockup"><div><span className="brand-mark dark">न</span><span><strong>NAMO</strong><em>BHARATAM</em></span></div><span>2014—2026 / EDITION 01</span><div className="footer-socials"><Instagram size={16} /><Linkedin size={16} /><BookOpen size={16} /></div></div>
+        <div className="footer-lockup"><div className="flex items-center"><img src="/images/namo-bharatam-logo.png" alt="Namo Bharatam" className="h-10 w-auto object-contain opacity-90 hover:opacity-100 transition-opacity" /></div><span>2014—2026 / EDITION 01</span><div className="footer-socials"><Instagram size={16} /><Linkedin size={16} /><BookOpen size={16} /></div></div>
       </section>
     </main>
   );
